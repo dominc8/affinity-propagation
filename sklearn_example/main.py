@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 def similarity(p1, p2):
     return -((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2)
@@ -19,7 +20,7 @@ def main():
     np.fill_diagonal(s, np.median(s))
     #np.fill_diagonal(s, -50)
 
-    for iter in range (10):
+    for iter in range (11):
         
         print("iteration ", iter)
         
@@ -43,11 +44,35 @@ def main():
                 max_rk[k] = 0
                 a[i][k] = min(0, np.sum(max_rk) + r[k][k])
 
-        print("a: ", a)
-        print("r: ", r)
+        c = a + r
 
-        np.savetxt("diag.txt", np.diagonal(a+r))
-        input()
+        print("r: ", r)
+        print("a: ", a)
+        print("c: ", c)
+
+        np.savetxt("diag.txt", np.diagonal(c))
+        np.savetxt("max_rows.txt", np.amax(c, axis=1))
+
+        prototypes = np.argmax(c, axis=1)
+        out = {}
+        for i in range(data_size):
+            if prototypes[i] in out:
+                out[prototypes[i]].append(i)
+            else:
+                out[prototypes[i]] = [i]
+        print("out: ", out)
+        plt.clf()
+        for key in out:
+            whatever = np.take(X, out[key], axis=0)
+            print(whatever)
+            plt.plot(whatever[:,0], whatever[:,1], '.')
+
+        plt.ion()
+        plt.show()
+        plt.pause(1)
+
+
+        #input()
 
     c = a + r
     max_rows = np.amax(c, axis=1)

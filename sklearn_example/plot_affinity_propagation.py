@@ -64,4 +64,4 @@ for k, col in zip(range(n_clusters_), colors):
 
 plt.title('Estimated number of clusters: %d' % n_clusters_)
 plt.savefig("sklearn_example.png")
-# plt.show()
+plt.show()
