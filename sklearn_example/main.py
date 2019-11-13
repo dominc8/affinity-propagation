@@ -2,9 +2,21 @@ import numpy as np
 import matplotlib.pyplot as plt
 import timeit
 from itertools import cycle
+import imageio
+from io import BytesIO
 
 def similarity(p1, p2):
     return -((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2)
+
+def make_gif(figures, filename, fps=10, **kwargs):
+    images = []
+    for fig in figures:
+        output = BytesIO()
+        fig.savefig(output)
+        plt.close(fig)  
+        output.seek(0)
+        images.append(imageio.imread(output))
+    imageio.mimsave(filename, images, fps=fps, **kwargs)
 
 def main():
     damping = 0.5
@@ -22,6 +34,8 @@ def main():
     #np.fill_diagonal(s, np.median(s))
     #np.fill_diagonal(s, np.amin(s))
     np.fill_diagonal(s, -50)
+
+    figures = []
 
     for iter in range (100):
         
@@ -127,6 +141,7 @@ def main():
         exemplars = np.unique(labels)
         colors = dict(zip(exemplars, cycle('bgrcmyk')))
 
+        fig = plt.figure()
         plt.clf()
         for i in range(len(labels)):
             x_t = X[i][0]
@@ -146,9 +161,13 @@ def main():
         plt.ion()
         plt.show()
         plt.pause(0.0001)
+        figures.append(fig)
 
 
         #input()
+
+    make_gif(figures, "test.gif")
+
 
 if __name__ == "__main__":
     main()
