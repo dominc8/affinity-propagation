@@ -63,10 +63,12 @@ def main():
                 out[prototypes[i]] = [i]
         #print("out: ", out)
         plt.clf()
+        ax = plt.gca()
         for key in out:
             whatever = np.take(X, out[key], axis=0)
-            print(whatever)
-            plt.plot(whatever[:,0], whatever[:,1], '.')
+            color = next(ax._get_lines.prop_cycler)['color']
+            plt.plot(whatever[:,0], whatever[:,1], '.', color = color)
+            plt.plot(X[key][0], X[key][1], 'o', color = color)
 
         plt.ion()
         plt.show()
@@ -77,3 +79,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    input()
