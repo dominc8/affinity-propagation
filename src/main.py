@@ -1,5 +1,6 @@
 from generate_data import generate
 from config import APCfg
+from fgconverter import FGConverter
 import numpy as np
 import matplotlib.pyplot as plt
 import timeit
@@ -9,16 +10,6 @@ from io import BytesIO
 
 def similarity(p1, p2):
     return -((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2)
-
-def make_gif(figures, filename, fps=10, **kwargs):
-    images = []
-    for fig in figures:
-        output = BytesIO()
-        fig.savefig(output)
-        plt.close(fig)  
-        output.seek(0)
-        images.append(imageio.imread(output))
-    imageio.mimsave(filename, images, fps=fps, **kwargs)
 
 def main():
     damping = APCfg.damping
@@ -47,7 +38,7 @@ def main():
     
     np.fill_diagonal(s, preference)
 
-    figures = []
+    fgc = FGConverter()
 
     for iter in range (APCfg.n_iterations):
         
@@ -110,8 +101,8 @@ def main():
         exemplars = np.unique(labels)
         colors = dict(zip(exemplars, cycle('bgrcmyk')))
 
-        #fig = plt.figure()
-        plt.clf()
+        fig = plt.figure(0)
+        fig.clf()
         for i in range(len(labels)):
             x_t = X[i][0]
             y_t = X[i][1]
@@ -130,7 +121,11 @@ def main():
         plt.ion()
         plt.show()
         plt.pause(0.0001)
+
+        fgc.add_fig(fig, False)
         #figures.append(fig)
+
+    fgc.make_gif("../data/fgc.gif")
 
 #     make_gif(figures, "test.gif")
 
