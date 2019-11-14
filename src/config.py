@@ -5,7 +5,7 @@ class DataGeneratorCfg:
     random_state = 0
 
 class APCfg:
-    n_iterations = 100
-    damping = 0.5
+    n_iterations = 300
+    damping = 0.8
     preference = -50 #'MEDIAN', 'MINIMUM' or a value
 

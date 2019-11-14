@@ -1,5 +1,8 @@
 import numpy as np
 from config import APCfg
+from fgconverter import FGConverter
+import matplotlib.pyplot as plt
+from itertools import cycle
 
 class AP:
     def __init__(self, input_data, f_similarity): 
@@ -7,9 +10,9 @@ class AP:
         self.similarity = f_similarity
         self.data_size = len(input_data)
         
-        self.S = np.zeros([data_size, data_size])
-        self.A = np.zeros([data_size, data_size])
-        self.R = np.zeros([data_size, data_size])
+        self.S = np.zeros([self.data_size, self.data_size])
+        self.A = np.zeros([self.data_size, self.data_size])
+        self.R = np.zeros([self.data_size, self.data_size])
         
         self._calculate_S()
 
@@ -23,6 +26,57 @@ class AP:
             damping = 0.5
 
         self.damping = damping
+
+        self.labels = []
+        self.exemplars = []
+        self._change_count = 0
+        self.fgc = FGConverter()
+
+    
+    def categorize(self, show_iterations=True, outfilename=None, outgifname=None):
+        for iteration in range(APCfg.n_iterations):
+            print("Iteration ", iteration)
+            self._update_R()
+            self._update_A()
+            self._update_clusters()
+            if outgifname == None:
+                self._display(show = show_iterations)
+            else:
+                self._display(show = show_iterations, make_gif = True)
+
+
+            if self._change_count > 10:
+                print("_change_count > 10, breaking loop")
+                break
+
+        if outfilename != None:
+            self._display(save_to_file = True, filename = outfilename)
+
+        if outgifname != None:
+            self.fgc.make_gif(outgifname)
+
+#         fig = plt.figure(0)
+#         fig.clf()
+#         colors = dict(zip(self.exemplars, cycle('bgrcmyk')))
+# 
+#         for i in range(len(self.labels)):
+#             x = self.X[i][0]
+#             y = self.X[i][1]
+# 
+#             if i in self.exemplars:
+#                 exemplar = i
+#                 edge = 'k'
+#                 ms = 10
+#             else:
+#                 exemplar = self.labels[i]
+#                 ms = 3
+#                 edge = None
+#                 plt.plot([x, self.X[exemplar][0]], [y, self.X[exemplar][1]], color=colors[exemplar])
+#             plt.plot(x, y, 'o', markersize=ms, markeredgecolor=edge, color=colors[exemplar])
+#         plt.show()
+
+
+
 
     def _calculate_S(self):
         for i in range(self.data_size):
@@ -89,6 +143,46 @@ class AP:
         # Merging diagonal of A into A
         A_next[indices, indices] = A_diag.sum(axis=0)
 
-        self.A = self.A * damping + (1 - self.damping) * A_next
-    
+        self.A = self.A * self.damping + (1 - self.damping) * A_next
 
+    def _update_clusters(self):
+        C = self.A + self.R
+        labels = np.argmax(C, axis=1)
+        exemplars = np.unique(labels)
+
+        if np.array_equal(labels, self.labels) and np.array_equal(np.sort(exemplars,axis=0), np.sort(self.exemplars,axis=0)):
+            self._change_count += 1
+        else:
+            self._change_count = 0
+
+        self.labels = labels
+        self.exemplars = exemplars
+
+    def _display(self, figure_number = 0, show = True, save_to_file = False, filename = "outfile.png", make_gif = False):
+        fig = plt.figure(figure_number)
+        fig.clf()
+        colors = dict(zip(self.exemplars, cycle('bgrcmyk')))
+
+        for i in range(len(self.labels)):
+            x = self.X[i][0]
+            y = self.X[i][1]
+
+            if i in self.exemplars:
+                exemplar = i
+                edge = 'k'
+                ms = 10
+            else:
+                exemplar = self.labels[i]
+                ms = 3
+                edge = None
+                plt.plot([x, self.X[exemplar][0]], [y, self.X[exemplar][1]], color=colors[exemplar])
+            plt.plot(x, y, 'o', markersize=ms, markeredgecolor=edge, color=colors[exemplar])
+        if show:
+            plt.ion()
+            plt.show()
+            plt.pause(0.0001)
+        if save_to_file:
+            plt.savefig(filename)
+        if make_gif:
+            self.fgc.add_fig(fig, False)
+        
