@@ -62,4 +62,33 @@ class AP:
 
         self.R = self.R * self.damping + (1 - self.damping) * (self.S - SA_max)
 
+    def _update_A(self):
+        indices = np.arange(self.data_size)
+
+        A_next = np.array(self.R)
+        A_next[A_next < 0] = 0
+        np.fill_diagonal(A_next, 0)
+        # We should also exclude i index for itself, but now it would be hard to vectorize, so we ignore it for now, and take it into account later
+
+        # Sum columnwise
+        A_next = A_next.sum(axis=0)
+        A_next = A_next + self.R[indices, indices]
+        
+        # Reshaping to square matrix
+        A_next = np.ones(self.A.shape) * A_next
+
+        # Subtracting the elements which we didn't ignore before
+        A_next -= np.clip(self.R, 0, np.inf)
+        A_next[A_next > 0] = 0
+
+        # Setting the diagonal of A, which is slightly different
+        A_diag = np.array(self.R)
+        np.fill_diagonal(A_diag, 0)
+        A_diag[A_diag < 0] = 0
+
+        # Merging diagonal of A into A
+        A_next[indices, indices] = A_diag.sum(axis=0)
+
+        self.A = self.A * damping + (1 - self.damping) * A_next
+    
 
