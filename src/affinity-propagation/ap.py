@@ -55,28 +55,6 @@ class AP:
         if outgifname != None:
             self.fgc.make_gif(outgifname)
 
-#         fig = plt.figure(0)
-#         fig.clf()
-#         colors = dict(zip(self.exemplars, cycle('bgrcmyk')))
-# 
-#         for i in range(len(self.labels)):
-#             x = self.X[i][0]
-#             y = self.X[i][1]
-# 
-#             if i in self.exemplars:
-#                 exemplar = i
-#                 edge = 'k'
-#                 ms = 10
-#             else:
-#                 exemplar = self.labels[i]
-#                 ms = 3
-#                 edge = None
-#                 plt.plot([x, self.X[exemplar][0]], [y, self.X[exemplar][1]], color=colors[exemplar])
-#             plt.plot(x, y, 'o', markersize=ms, markeredgecolor=edge, color=colors[exemplar])
-#         plt.show()
-
-
-
 
     def _calculate_S(self):
         for i in range(self.data_size):

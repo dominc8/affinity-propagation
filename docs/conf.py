@@ -19,7 +19,7 @@ __location__ = os.path.join(os.getcwd(), os.path.dirname(
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-sys.path.insert(0, os.path.join(__location__, '../src'))
+sys.path.insert(0, os.path.join(__location__, '../src/affinity-propagation'))
 
 # -- Run sphinx-apidoc ------------------------------------------------------
 # This hack is necessary since RTD does not issue `sphinx-apidoc` before running
@@ -35,7 +35,7 @@ except ImportError:
     from sphinx import apidoc
 
 output_dir = os.path.join(__location__, "api")
-module_dir = os.path.join(__location__, "../src/src")
+module_dir = os.path.join(__location__, "../src")
 try:
     shutil.rmtree(output_dir)
 except FileNotFoundError:
@@ -81,8 +81,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'affinity_prop'
-copyright = u'2019, Kruza'
+project = u'affinity-propagation'
+copyright = u'2019, dominc8, Kruza'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -235,8 +235,8 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'user_guide.tex', u'affinity_prop Documentation',
-   u'Kruza', 'manual'),
+  ('index', 'user_guide.tex', u'affinity-propagation Documentation',
+   u'dominc8, Kruza', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of

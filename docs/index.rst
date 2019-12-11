@@ -1,8 +1,8 @@
-=============
-affinity_prop
-=============
+====================
+affinity_propagation
+====================
 
-This is the documentation of **affinity_prop**.
+This is the documentation of **affinity_propagation**.
 
 .. note::
 
