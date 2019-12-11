@@ -1,5 +1,6 @@
 from generate_data import generate
 from ap import AP
+from config import MainCfg
 import numpy as np
 import os
 
@@ -11,10 +12,11 @@ def main():
         os.makedirs("data")
     if not os.path.exists("output"):
         os.makedirs("output")
-    generate()
+    if MainCfg.generate_new_data:
+        generate()
     X = np.loadtxt("data/data.txt")
     ap = AP(X, similarity)
-    ap.categorize(show_iterations=False, outfilename="output/result.png", outgifname="output/result.gif")
+    ap.categorize(show_iterations=MainCfg.show_iterations, outfilename=MainCfg.outfilename, outgifname=MainCfg.outgifname)
 
 if __name__ == "__main__":
     main()

@@ -25,4 +25,10 @@ Install required packages:
 pip install -r requirements.txt
 ```
 
+### Run
+To run adjust configuration in config.py, and then:
+```
+python src/affinity-propagation/main.py
+```
+
 
